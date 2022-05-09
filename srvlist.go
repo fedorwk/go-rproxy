@@ -60,7 +60,7 @@ func NewServiceListFromReader(r io.Reader) (ServiceList, error) {
 // Parse appends parsed services from r.
 //	r format (protocol is optional):
 //		[service_name1] [addr1]
-//		[service_name2] [addr2] *[protocol]...
+//		[service_name2] [addr2] [*protocol]...
 //
 //	Example:
 //		auth_service 192.168.1.2:80
@@ -88,7 +88,7 @@ func (sl ServiceList) Parse(r io.Reader) error {
 			serviceInfo.Addr = rawInfo[1]
 			serviceInfo.Protocol = DefaultProtocol
 		default:
-			return errors.New("parsing service list: ragged input. format: \"[service_name] [address] *[protocol]\", protocol is optional")
+			return errors.New("parsing service list: ragged input. format: \"[service_name] [address] [*protocol]\", protocol is optional")
 		}
 		sl[serviceInfo.Name] = serviceInfo
 	}

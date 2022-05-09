@@ -4,7 +4,7 @@ go-rproxy is easy-to-use reverse proxy tool for your services. It can be used bo
 ## Usage
 1. List your services in following format  
 `
-[service_name] [address] *[protocol]
+[service_name] [address] [*protocol]
 `  
   
 **service_name** is url path section which defines target service.  
