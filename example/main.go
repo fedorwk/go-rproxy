@@ -1,19 +1,16 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"os"
 
-	rproxy "github.com/fedorwk/ngrok-single-endpoint"
+	rproxy "github.com/fedorwk/go-rproxy"
 	"github.com/gin-gonic/gin"
-	"github.com/ilyakaznacheev/cleanenv"
 )
 
 func main() {
-	Config.Init()
-	srvlistFile, err := os.Open(Config.ServiceListFilePath)
+	srvlistFile, err := os.Open("srvlist")
 	if err != nil {
 		log.Fatalf("err opening srvlist file: %+v\n", err)
 	}
@@ -28,7 +25,7 @@ func main() {
 	}
 
 	server := http.Server{
-		Addr:    ":" + Config.Port,
+		Addr:    ":8080",
 		Handler: proxyRouter,
 	}
 
@@ -36,30 +33,4 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-}
-
-var (
-	Config  config
-	cfgPath string
-)
-
-type config struct {
-	// Server section
-	Port string `yaml:"port" env:"PORT" env-default:"8080"`
-
-	// App Section
-	ServiceListFilePath string `yaml:"srvlistpath" env:"SRVLISTPATH"`
-}
-
-func (c *config) Init() error {
-	flagSet := flag.NewFlagSet("Main", flag.ContinueOnError)
-	flagSet.StringVar(&cfgPath, "cfg", "config.yml", "path to config file")
-	flagSet.Usage = cleanenv.FUsage(flagSet.Output(), c, nil, flagSet.Usage)
-
-	flagSet.Parse(os.Args[1:])
-	err := cleanenv.ReadConfig(cfgPath, c)
-	if err != nil {
-		return err
-	}
-	return nil
 }
